@@ -15,6 +15,22 @@ from users.models import PasswordResets
 from users.serializers import UserSerializer, PasswordChangeSerializer
 from .serializers import PasswordCodeCheck, PasswordEmailCodeSend
 
+from django.contrib.auth import authenticate, login as django_login
+
+
+@api_view(['POST'])
+def login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        django_login(request, user)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
 
 class RegisterAPIView(CreateAPIView):
     serializer_class = UserSerializer

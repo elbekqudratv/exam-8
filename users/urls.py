@@ -1,8 +1,16 @@
 from django.urls import path
-from .views import RegisterAPIView, PasswordChangeView, PasswordResetView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import RegisterAPIView, PasswordChangeView, PasswordResetView, login
+
+
+
+router = DefaultRouter()
+router.register(r'register', RegisterAPIView)
+router.register(r'password/change/', PasswordChangeView)
+router.register(r'password/reset/',PasswordResetView)
+router.register(r'login/',login)
 
 urlpatterns = [
-    path('register/', RegisterAPIView.as_view(), name='register'),
-    path('password/change/', PasswordChangeView, name='password_change'),
-    path('password/reset/', PasswordResetView, name='password_reset'),
+    path('', include(router.urls)),
 ]
