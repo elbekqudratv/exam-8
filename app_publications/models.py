@@ -46,7 +46,7 @@ class Publications(models.Model):
         return self.pub_name_uz
     
     class Meta:
-        db_table = 'publications'
+        db_table = 'publication'
         verbose_name = 'Publication'
         verbose_name_plural = 'publication'
 

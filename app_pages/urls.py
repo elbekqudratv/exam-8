@@ -8,10 +8,9 @@ router.register(r'faqs', FAQViewSet, basename='faq')
 
 router.register(r'requirements',RequirementsViewSet, basename='requirements')
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+
 
 urlpatterns = [
     path('contact/', ContactView.as_view(), name='contact'),
+    path('', include(router.urls)),
 ]
