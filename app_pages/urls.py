@@ -4,10 +4,14 @@ from .views import FAQViewSet, ContactView, RequirementsViewSet
 
 
 router = DefaultRouter()
-router.register(r'faqs', FAQViewSet)
-router.register(r'contact', ContactView)
-router.register(r'requirements',RequirementsViewSet)
+router.register(r'faqs', FAQViewSet, basename='faq')
+
+router.register(r'requirements',RequirementsViewSet, basename='requirements')
 
 urlpatterns = [
     path('', include(router.urls)),
+]
+
+urlpatterns = [
+    path('contact/', ContactView.as_view(), name='contact'),
 ]

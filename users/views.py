@@ -1,7 +1,7 @@
 from datetime import datetime
 from random import randint
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login as django_login
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -12,10 +12,14 @@ from rest_framework import status
 
 from config import settings as config_settings
 from users.models import PasswordResets
-from users.serializers import UserSerializer, PasswordChangeSerializer
-from .serializers import PasswordCodeCheck, PasswordEmailCodeSend
+from users.serializers import UserSerializer, PasswordChangeSerializer, PasswordCodeCheck, PasswordEmailCodeSend
 
-from django.contrib.auth import authenticate, login as django_login
+
+class RegisterAPIView(CreateAPIView):
+    serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 @api_view(['POST'])
@@ -29,14 +33,6 @@ def login(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-
-class RegisterAPIView(CreateAPIView):
-    serializer_class = UserSerializer
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 
 @api_view(['POST'])

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from .models import PublicationType, Gender, Publications, Author
-from .serializers import PublicationTypeSerializer, GenderSerializer, PublicationsSerializer, AuthorSerializer
+from .serializers import PublicationTypeSerializer, GenderSerializer, PublicationsListSerializer, PublicationsDetailSerializer, AuthorSerializer
 
 class PublicationTypeViewSet(viewsets.ModelViewSet):
     queryset = PublicationType.objects.all()
@@ -16,11 +16,11 @@ class AuthorViewSet(viewsets.ModelViewSet):
 
 class PublicationsListView(viewsets.ModelViewSet):
     queryset = Publications.objects.all()
-    serializer_class = PublicationsSerializer
+    serializer_class = PublicationsListSerializer
 
     def get_queryset(self):
         return self.queryset.values('id', 'pub_name_uz', 'pub_desc_uz')
 
 class PublicationsDetailView(viewsets.ModelViewSet):
     queryset = Publications.objects.all()
-    serializer_class = PublicationsSerializer
+    serializer_class = PublicationsDetailSerializer

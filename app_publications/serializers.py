@@ -16,10 +16,12 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = '__all__'
 
-class PublicationsSerializer(serializers.ModelSerializer):
-    pub_type = PublicationTypeSerializer()
-    pub_author = AuthorSerializer()
+class PublicationsListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Publications
+        fields = ['id', 'pub_name_uz', 'pub_desc_uz']
 
+class PublicationsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publications
         fields = '__all__'

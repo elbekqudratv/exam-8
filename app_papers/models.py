@@ -10,10 +10,10 @@ class Paper(models.Model):
     paper_text_uz = models.TextField()
     paper_text_eng = models.TextField(null=True)
     paper_date = models.DateField()
-    paper_author = models.ForeignKey(User, on_delete=models.CASCADE)
-    paper_view_count = models.IntegerField(default=0)
-    paper_code = models.IntegerField(unique=True)
-    paper_file = models.FileField(upload_to='papers/')
+    paper_author = models.CharField(max_length=255)
+    paper_view = models.IntegerField()
+    paper_code = models.IntegerField()
+    paper_file = models.BinaryField()
 
     def __str__(self):
         return self.paper_name_uz
@@ -21,7 +21,7 @@ class Paper(models.Model):
     class Meta:
         db_table = 'papers'
         verbose_name = 'Paper'
-        verbose_name_plural = 'Papers'
+        verbose_name_plural = 'papers'
 
 
 class Article(models.Model):
@@ -29,30 +29,24 @@ class Article(models.Model):
     article_text_eng = models.TextField(null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')], default='pending')
-    publication = models.ForeignKey('Publication', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.article_text_uz
 
-    def delete(self, *args, **kwargs):
-        self.publication = None  # Delete the reference to publication before deleting the article
-        self.save()
-        super().delete(*args, **kwargs)
-
     class Meta:
         db_table = 'articles'
         verbose_name = 'Article'
-        verbose_name_plural = 'Articles'
+        verbose_name_plural = 'articles'
 
 
 class Annotation(models.Model):
     anno_text_uz = models.TextField()
     anno_text_eng = models.TextField(null=True)
     anno_date = models.DateField()
-    anno_author = models.ForeignKey(User, on_delete=models.CASCADE)
-    anno_view_count = models.IntegerField(default=0)
+    anno_author = models.CharField(max_length=255)
+    anno_view = models.IntegerField()
     anno_keyword = models.CharField(max_length=255)
-    anno_file = models.FileField(upload_to='annotations/')
+    anno_file = models.BinaryField()
 
     def __str__(self):
         return self.anno_text_uz
@@ -60,7 +54,7 @@ class Annotation(models.Model):
     class Meta:
         db_table = 'annotations'
         verbose_name = 'Annotation'
-        verbose_name_plural = 'Annotations'
+        verbose_name_plural = 'annotations'
 
 
 class Reference(models.Model):
@@ -76,22 +70,4 @@ class Reference(models.Model):
     class Meta:
         db_table = 'references'
         verbose_name = 'Reference'
-        verbose_name_plural = 'References'
-
-
-class Publication(models.Model):
-    title = models.CharField(max_length=255)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    publication_date = models.DateField(auto_now_add=True)
-    view_count = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.title
-
-    def get_articles(self):
-        return Article.objects.filter(publication=self)
-
-    class Meta:
-        db_table = 'publications'
-        verbose_name = 'Publication'
-        verbose_name_plural = 'Publications'
+        verbose_name_plural = 'references'
