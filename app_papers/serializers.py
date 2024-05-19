@@ -20,3 +20,9 @@ class ReferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reference
         fields = '__all__'
+
+class PaperCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paper
+        fields = '__all__'
+

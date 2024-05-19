@@ -21,14 +21,14 @@ class ContactView(APIView):
             contact_sender = data.get('contact_sender')
             contact_message = data.get('contact_message')
 
-            # Save the contact instance
+            
             contact = Contact.objects.create(
                 contact_name=contact_name,
                 contact_sender=contact_sender,
                 contact_message=contact_message
             )
 
-            # Send the email
+            
             send_mail(
                 subject=f'Contact Form mail from {contact_name}',
                 message=contact_message,
@@ -53,3 +53,24 @@ class RequirementsViewSet(viewsets.ModelViewSet):
     queryset = Requirements.objects.all()
     serializer_class = RequirementsSerializer
     permission_classes = [IsOwnerOrSuperUser]
+
+#MAIN PAGE
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from app_publications.models import Publications
+from app_papers.models import Paper
+from .serializers import appPublicationSerializer, appPaperSerializer
+
+class MainPageView(APIView):
+    def get(self, request, format=None):
+        latest_publications = Publications.objects.order_by('-publication_date')[:5]  
+        most_viewed_papers = Paper.objects.order_by('-paper_view')[:5]  
+
+        publications_serializer = appPublicationSerializer(latest_publications, many=True)
+        papers_serializer = appPaperSerializer(most_viewed_papers, many=True)
+
+        return Response({
+            'latest_publications': publications_serializer.data,
+            'most_viewed_papers': papers_serializer.data
+        })

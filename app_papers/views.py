@@ -63,11 +63,13 @@ from rest_framework import viewsets
 from .models import Paper, Article, Annotation, Reference
 from .serializers import PaperSerializer, ArticleSerializer, AnnotationSerializer, ReferenceSerializer
 from .permissions import IsOwnerOrSuperUser
+from .serializers import PaperCountSerializer
 
 class PaperViewSet(viewsets.ModelViewSet):
     queryset = Paper.objects.all()
     serializer_class = PaperSerializer
     permission_classes = [IsOwnerOrSuperUser]
+    
 
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
@@ -83,5 +85,29 @@ class ReferenceViewSet(viewsets.ModelViewSet):
     queryset = Reference.objects.all()
     serializer_class = ReferenceSerializer
     permission_classes = [IsOwnerOrSuperUser]
+
+
+
+
+class PaperCountViewSet(viewsets.ModelViewSet):
+    serializer_class = PaperCountSerializer
+    queryset = Paper.objects.order_by('paper_name_uz')
+
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if not request.session.get(f'viewed_paper_{obj.id}', False):
+            obj.paper_view += 1
+            obj.save(update_fields=("paper_view",))
+            request.session[f'viewed_paper_{obj.id}'] = True
+        return super().retrieve(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        for obj in queryset:
+            if not request.session.get(f'viewed_paper_{obj.id}', False):
+                obj.paper_view += 1
+                obj.save(update_fields=("paper_view",))
+                request.session[f'viewed_paper_{obj.id}'] = True
+        return super().list(request, *args, **kwargs)
 
 
